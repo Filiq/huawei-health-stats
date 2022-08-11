@@ -4,13 +4,19 @@ import MainLayout from "../layouts/MainLayout";
 import { useEffect } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
 import uploadedFileState from "../atoms/uploadedFile";
-import motionPathData from "../atoms/motionPathData";
+import motionPathDataState from "../atoms/motionPathData";
+import sportPerMinuteState from "../atoms/sportPerMinute";
 import { useRouter } from "next/router";
+import fileNamesState from "../atoms/fileNames";
 
 export default function Home() {
   const file = useRecoilValue(uploadedFileState);
-  const [motionPathDataState, setMotionPathDataState] =
-    useRecoilState(motionPathData);
+  const [motionPathData, setMotionPathData] =
+    useRecoilState(motionPathDataState);
+  const [sportPerMinute, setSportPerMinute] =
+    useRecoilState(sportPerMinuteState);
+  const [fileNames, setFileNames] = useRecoilState(fileNamesState);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -22,7 +28,21 @@ export default function Home() {
       reader.onload = function () {
         const data = JSON.parse(reader.result);
 
-        setMotionPathDataState(data);
+        console.log(data);
+
+        if (data[0]?.sportDataUserData) {
+          setSportPerMinute(data);
+          setFileNames({
+            motionPath: fileNames.motionPath,
+            sportPerMinute: file.name,
+          });
+        } else {
+          setMotionPathData(data);
+          setFileNames({
+            sportPerMinute: fileNames.sportPerMinute,
+            motionPath: file.name,
+          });
+        }
 
         router.push("/dashboard");
       };

@@ -86,6 +86,14 @@ export default function MotionPath() {
       };
     });
 
+    mapPoints[0].k === undefined && mapPoints.shift();
+
+    Math.abs(
+      mapPoints[mapPoints.length - 1].lat - mapPoints[mapPoints.length - 2].lat
+    ) > 1 && mapPoints.pop();
+
+    mapPoints = mapPoints.filter((item) => item.lon !== "-80.0");
+
     console.log(mapPoints);
     setPathCoords(mapPoints);
     setPath(motionPathData[router.query.id]);

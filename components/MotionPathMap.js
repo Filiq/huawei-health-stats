@@ -6,6 +6,9 @@ export default function MotionPathMap({ pathCoords }) {
   const mapContainerRef = useRef();
 
   useEffect(() => {
+    if (pathCoords.length === 0) return;
+    if (!pathCoords[0]?.lon) return;
+
     const style = {
       version: 8,
       sources: {
@@ -28,10 +31,7 @@ export default function MotionPathMap({ pathCoords }) {
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style,
-      center: [
-        pathCoords[0]?.lon ? pathCoords[0]?.lon : 0,
-        pathCoords[0]?.lat ? pathCoords[0]?.lat : 0,
-      ],
+      center: [pathCoords[0].lon, pathCoords[0].lat],
       zoom: 14,
     });
 
@@ -69,6 +69,31 @@ export default function MotionPathMap({ pathCoords }) {
       coordinates: pathCoords.map((coord) => [coord.lon, coord.lat]),
     });
 
+    const startDiv = document.createElement("div");
+    startDiv.style.width = "2rem";
+    const startImg = new Image();
+    startImg.src = "/start.png";
+
+    startDiv.appendChild(startImg);
+
+    const endDiv = document.createElement("div");
+    endDiv.style.width = "2rem";
+    const endImg = new Image();
+    endImg.src = "/stop.png";
+
+    endDiv.appendChild(endImg);
+
+    new maplibregl.Marker(startDiv)
+      .setLngLat([pathCoords[0]?.lon, pathCoords[0]?.lat])
+      .addTo(map);
+
+    new maplibregl.Marker(endDiv)
+      .setLngLat([
+        pathCoords[pathCoords.length - 1].lon,
+        pathCoords[pathCoords.length - 1].lat,
+      ])
+      .addTo(map);
+
     //console.log(pathCoords[0]);
     //console.log(pathCoords.map((coord) => [coord.lon, coord.lat]));
 
@@ -82,11 +107,13 @@ export default function MotionPathMap({ pathCoords }) {
     return () => {
       map.remove();
     };
-  }, [pathCoords]);
+  });
 
   return (
     <div className="h-[44rem]">
-      <div ref={mapContainerRef} className="w-full h-full" />
+      {pathCoords.length !== 0 && (
+        <div ref={mapContainerRef} className="w-full h-full" />
+      )}
     </div>
   );
 }
