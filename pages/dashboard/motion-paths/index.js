@@ -15,9 +15,9 @@ export default function MotionPaths() {
   const [caloriesAscending, setCaloriesAscending] = useState(false);
 
   useEffect(() => {
-    motionPathData.forEach((item) => {
-      console.log(item.sportType, new Date(item.startTime));
-    });
+    // motionPathData.forEach((item) => {
+    //   console.log(item.sportType, new Date(item.startTime));
+    // });
   }, []);
 
   const router = useRouter();

@@ -6,12 +6,13 @@ import { useRecoilValue } from "recoil";
 import motionPathDataState from "../../../atoms/motionPathData";
 import convertMsToTime from "../../../lib/convertMsToTime";
 import calculatePace from "../../../lib/calculatePace";
-import { PaperClipIcon } from "@heroicons/react/solid";
+import MotionPathMap from "../../../components/MotionPathMap";
 
 export default function MotionPath() {
   const router = useRouter();
   const motionPathData = useRecoilValue(motionPathDataState);
   const [path, setPath] = useState(null);
+  const [pathCoords, setPathCoords] = useState([]);
   const [stats, setStats] = useState([
     {
       name: "Total Steps",
@@ -75,7 +76,18 @@ export default function MotionPath() {
         .filter((item) => (Object.keys(item) == "" ? false : true))
     );
 
+    mapPoints = mapPoints.map((item) => {
+      return {
+        k: item[0].k,
+        lat: item[1].lat,
+        lon: item[2].lon,
+        alt: item[3].alt,
+        t: item[4].t,
+      };
+    });
+
     console.log(mapPoints);
+    setPathCoords(mapPoints);
     setPath(motionPathData[router.query.id]);
 
     const statsArr = [];
@@ -147,11 +159,9 @@ export default function MotionPath() {
 
   return (
     <DashboardLayout navigation={navigation}>
-      <div>
-        <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-          Motion Path
-        </h1>
-        <p className="px-4 py-3 bg-white shadow rounded-lg overflow-hidden mb-4 flex justify-between">
+      <div className="space-y-4">
+        <h1 className="text-3xl font-semibold text-gray-900">Motion Path</h1>
+        <p className="px-4 py-3 bg-white shadow rounded-lg overflow-hidden flex justify-between">
           Your{" "}
           {path?.sportType === 4
             ? "run"
@@ -192,7 +202,8 @@ export default function MotionPath() {
             : "unknown (cycled probably)"}{" "}
           for {convertMsToTime(path?.totalTime)}
         </p>
-        <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3 mb-4">
+        {/* stats */}
+        <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           {stats.map((item) => (
             <div
               key={item.name}
@@ -269,6 +280,8 @@ export default function MotionPath() {
             </dl>
           </div>
         </div>
+        {/* motion map */}
+        <MotionPathMap pathCoords={pathCoords} />
       </div>
     </DashboardLayout>
   );
