@@ -7,37 +7,22 @@ import motionPathDataState from "../../../atoms/motionPathData";
 import convertMsToTime from "../../../lib/convertMsToTime";
 import calculatePace from "../../../lib/calculatePace";
 import MotionPathMap from "../../../components/MotionPathMap";
+import numberWithSpaces from "../../../lib/numberWithSpaces";
 
 export default function MotionPath() {
   const router = useRouter();
   const motionPathData = useRecoilValue(motionPathDataState);
   const [path, setPath] = useState(null);
   const [pathCoords, setPathCoords] = useState([]);
-  const [stats, setStats] = useState([
-    {
-      name: "Total Steps",
-      stat: "",
-      icon: "",
-    },
-    {
-      name: "Total Distance",
-      stat: "",
-      icon: "",
-    },
-    {
-      name: "Total Calories",
-      stat: "",
-      icon: "",
-    },
-  ]);
+  const [stats, setStats] = useState([]);
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
     {
       name: "Motion Paths",
       href: "/dashboard/motion-paths",
       icon: UsersIcon,
-      current: false,
+      current: true,
     },
     {
       name: "Statistics",
@@ -46,12 +31,6 @@ export default function MotionPath() {
       current: false,
     },
   ];
-
-  function numberWithSpaces(x) {
-    var parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    return parts.join(".");
-  }
 
   useEffect(() => {
     // console.log(router.query.id);

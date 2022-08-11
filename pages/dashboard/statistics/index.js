@@ -2,38 +2,102 @@ import { useEffect, useState } from "react";
 import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
 
 import { useRecoilState } from "recoil";
-import DashboardLayout from "../../layouts/DashboardLayout";
-import sportPerMinuteState from "../../atoms/sportPerMinute";
+import DashboardLayout from "../../../layouts/DashboardLayout";
+import sportPerMinuteState from "../../../atoms/sportPerMinute";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
+import numberWithSpaces from "../../../lib/numberWithSpaces";
+import { useRouter } from "next/router";
 
 export default function Statistics() {
+  const [stats, setStats] = useState([]);
   const [sportPerMinuteData, setSportPerMinuteData] =
     useRecoilState(sportPerMinuteState);
 
+  const router = useRouter();
+
   useEffect(() => {
-    // sportPerMinuteData[4].sportDataUserData.reduce((prev, current) => {
-    //   prev + current.sportBasicInfos[0].steps;
+    if (sportPerMinuteData.length === 0) {
+      router.push("/dashboard");
+    }
+  }, []);
 
-    // }, 0);
+  useEffect(() => {
+    const data = sportPerMinuteData.map((item) => {
+      return {
+        ...item,
+        totalSteps: item.sportDataUserData.reduce((prev, current) => {
+          return prev + current.sportBasicInfos[0].steps;
+        }, 0),
+        totalDistance: item.sportDataUserData.reduce((prev, current) => {
+          return prev + current.sportBasicInfos[0].distance;
+        }, 0),
+        totalCalories: item.sportDataUserData.reduce((prev, current) => {
+          return prev + current.sportBasicInfos[0].calorie;
+        }, 0),
+      };
+    });
 
-    setSportPerMinuteData(
-      sportPerMinuteData.map((item) => {
-        return {
-          ...item,
-          totalSteps: item.sportDataUserData.reduce((prev, current) => {
-            return prev + current.sportBasicInfos[0].steps;
-          }, 0),
-          totalDistance: item.sportDataUserData.reduce((prev, current) => {
-            return prev + current.sportBasicInfos[0].distance;
-          }, 0),
-          totalCalories: item.sportDataUserData.reduce((prev, current) => {
-            return prev + current.sportBasicInfos[0].calorie;
-          }, 0),
-        };
-      })
-    );
+    setSportPerMinuteData(data);
 
-    //console.log(sportPerMinuteData, " default");
+    const statsArr = [];
+
+    statsArr.push({
+      name: "Total Steps",
+      stat: numberWithSpaces(
+        data.reduce((prev, current) => {
+          return prev + current.totalSteps;
+        }, 0)
+      ),
+      icon: "",
+    });
+
+    statsArr.push({
+      name: "Total Distance",
+      stat: numberWithSpaces(
+        data.reduce((prev, current) => {
+          return prev + current.totalDistance;
+        }, 0) /
+          1000 +
+          " km"
+      ),
+      desc:
+        "Equivalent to " +
+        (
+          data.reduce((prev, current) => {
+            return prev + current.totalDistance;
+          }, 0) /
+          1000 /
+          42.195
+        ).toFixed(2) +
+        " marathons",
+      icon: "",
+    });
+
+    statsArr.push({
+      name: "Total Calories",
+      stat: numberWithSpaces(
+        data.reduce((prev, current) => {
+          return prev + current.totalCalories;
+        }, 0) /
+          1000 +
+          " kcal"
+      ),
+      desc:
+        "Equivalent to " +
+        (
+          data.reduce((prev, current) => {
+            return prev + current.totalCalories;
+          }, 0) /
+          1000 /
+          257.2
+        ).toFixed(2) +
+        " Big Macs (assuming a Big Mac has 257.2 kcal)",
+      icon: "",
+    });
+
+    setStats(statsArr);
+
+    console.log(sportPerMinuteData);
   }, []);
 
   const navigation = [
@@ -59,8 +123,35 @@ export default function Statistics() {
 
   return (
     <DashboardLayout navigation={navigation}>
+      <p className="px-4 py-3 bg-white shadow rounded-lg overflow-hidden">
+        You are using Huawei Health app to track your daily steps, distance and
+        calories for more than {numberWithSpaces(sportPerMinuteData.length)}{" "}
+        days.
+      </p>
+      {/* stats */}
+      <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {stats.map((item) => (
+          <div
+            key={item.name}
+            className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6"
+          >
+            <dt className="text-sm font-medium text-gray-500 truncate">
+              {item.name}
+            </dt>
+            <dd className="mt-1 text-3xl font-semibold text-gray-900">
+              {item.stat}
+            </dd>
+            {item?.desc && (
+              <dd className="text-sm font-semibold text-gray-500">
+                {item.desc}
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
+      {/* list */}
       <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
@@ -252,8 +343,8 @@ export default function Statistics() {
                           className="border px-2 py-1 rounded-2xl bg-blue-500 text-white border-blue-500 active:scale-95"
                           onClick={() => {
                             router.push(
-                              `/dashboard/motion-days/[id]`,
-                              `/dashboard/motion-days/${index}`
+                              `/dashboard/statistics/[id]`,
+                              `/dashboard/statistics/${index}`
                             );
                           }}
                         >
