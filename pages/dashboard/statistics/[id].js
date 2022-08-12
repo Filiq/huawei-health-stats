@@ -1,5 +1,5 @@
 import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useRecoilValue } from "recoil";
@@ -12,14 +12,24 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, getElementsAtEvent } from "react-chartjs-2";
 import sportPerMinuteState from "../../../atoms/sportPerMinute";
+import DayDetailsModal from "../../../components/DayDetailsModal";
 
 export default function MotionPath() {
   const router = useRouter();
   const sportPerMinute = useRecoilValue(sportPerMinuteState);
   const [day, setDay] = useState(null);
-  const [stepsArr, setStepsArr] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  const [deviceCodes, setDeviceCodes] = useState([]);
+  const [versions, setVersions] = useState([]);
+  const [chartData, setChartData] = useState({
+    steps: [],
+    distance: [],
+    calories: [],
+  });
+  const [detailsData, setDetailsData] = useState([[]]);
+  const [detailData, setDetailData] = useState([]);
+  const [openDetails, setOpenDetails] = useState(false);
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
@@ -47,6 +57,11 @@ export default function MotionPath() {
   );
 
   useEffect(() => {
+    if (sportPerMinute.length === 0) {
+      router.push("/dashboard");
+      return;
+    }
+
     setDay({
       ...sportPerMinute[router.query.id],
       sportDataUserData: [
@@ -58,14 +73,70 @@ export default function MotionPath() {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
 
+    const distance = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+    const calories = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+    const deviceCodesArr = [];
+    const versionsArr = [];
+    const detailDataArr = [
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+    ];
+
     [...sportPerMinute[router.query.id].sportDataUserData]
       .sort((a, b) => a.startTime - b.startTime)
       .forEach((item) => {
         steps[new Date(item.startTime).getHours()] +=
           item.sportBasicInfos[0].steps;
+        distance[new Date(item.startTime).getHours()] +=
+          item.sportBasicInfos[0].distance / 1000;
+        calories[new Date(item.startTime).getHours()] +=
+          item.sportBasicInfos[0].calorie / 1000;
+
+        detailDataArr[new Date(item.startTime).getHours()].push(item);
+
+        if (deviceCodesArr.indexOf(item.deviceCode) === -1) {
+          deviceCodesArr.push(item.deviceCode);
+        }
+
+        if (versionsArr.indexOf(item.version) === -1) {
+          versionsArr.push(item.version);
+        }
       });
 
-    setStepsArr(steps);
+    console.log(detailDataArr);
+
+    setChartData({ steps, distance, calories });
+    setDeviceCodes(deviceCodesArr);
+    setVersions(versionsArr);
+    setDetailsData(detailDataArr);
   }, []);
 
   const labels = [
@@ -105,16 +176,42 @@ export default function MotionPath() {
     },
   };
 
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Steps",
-        data: stepsArr,
-        backgroundColor: "rgba(0, 109, 243, 0.8)",
-      },
-    ],
-  };
+  const stepsChartRef = useRef(null);
+  const distanceChartRef = useRef(null);
+  const caloriesChartRef = useRef(null);
+
+  function handleChart(e, type) {
+    let index;
+
+    if (type === "steps") {
+      const elements = getElementsAtEvent(stepsChartRef.current, e);
+
+      if (elements.length === 0) return;
+
+      index = elements[0].index;
+    }
+
+    if (type === "distance") {
+      const elements = getElementsAtEvent(distanceChartRef.current, e);
+
+      if (elements.length === 0) return;
+
+      index = elements[0].index;
+    }
+
+    if (type === "calories") {
+      const elements = getElementsAtEvent(caloriesChartRef.current, e);
+
+      if (elements.length === 0) return;
+
+      index = elements[0].index;
+    }
+
+    console.log(detailsData[index]);
+
+    setDetailData(detailsData[index]);
+    setOpenDetails(true);
+  }
 
   return (
     <DashboardLayout navigation={navigation}>
@@ -141,7 +238,54 @@ export default function MotionPath() {
           <span className="text-gray-600">Timezone: {day?.timeZone}</span>
         </p>
         {/* graph */}
-        <Bar data={data} options={options} />
+        <h2 className="font-semibold text-2xl">Steps</h2>
+        <Bar
+          data={{
+            labels,
+            datasets: [
+              {
+                label: "Steps",
+                data: chartData.steps,
+                backgroundColor: "rgba(0, 109, 243, 0.8)",
+              },
+            ],
+          }}
+          options={options}
+          ref={stepsChartRef}
+          onClick={(e) => handleChart(e, "steps")}
+        />
+        <h2 className="font-semibold text-2xl">Distance (km)</h2>
+        <Bar
+          data={{
+            labels,
+            datasets: [
+              {
+                label: "Distance (km)",
+                data: chartData.distance,
+                backgroundColor: "rgba(243, 156, 18, 0.8)",
+              },
+            ],
+          }}
+          options={options}
+          ref={distanceChartRef}
+          onClick={(e) => handleChart(e, "distance")}
+        />
+        <h2 className="font-semibold text-2xl">Calories (kcal)</h2>
+        <Bar
+          data={{
+            labels,
+            datasets: [
+              {
+                label: "Calories (kcal)",
+                data: chartData.calories,
+                backgroundColor: "rgba(1, 152, 117, 0.8)",
+              },
+            ],
+          }}
+          options={options}
+          ref={caloriesChartRef}
+          onClick={(e) => handleChart(e, "calories")}
+        />
         {/* list */}
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
@@ -156,43 +300,30 @@ export default function MotionPath() {
             <dl className="sm:divide-y sm:divide-gray-200">
               <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">
-                  Device Code
+                  Device Code{deviceCodes.length > 1 ? "s" : ""}
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {day?.sportDataUserData[0].deviceCode}
+                  {deviceCodes.join(", ")}
                 </dd>
               </div>
               <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Version</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {day?.version}
-                </dd>
-              </div>
-              {/* <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">
-                  Abnormal Track
+                  Version{versions.length > 1 ? "s" : ""}
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {path?.abnormalTrack === 0
-                    ? "Valid track"
-                    : path?.abnormalTrack === 1
-                    ? "Track with abnormal pace"
-                    : path?.abnormalTrack === 2
-                    ? "Track with abnormal distance"
-                    : path?.abnormalTrack === 3
-                    ? "Track with abnormal time"
-                    : path?.abnormalTrack === 4
-                    ? "Track with abnormal steps"
-                    : path?.abnormalTrack === 100
-                    ? "Other abnormal tracks"
-                    : "Unknown"}{" "}
-                  ({path?.abnormalTrack})
+                  {versions.join(", ")}
                 </dd>
-              </div> */}
+              </div>
             </dl>
           </div>
         </div>
       </div>
+
+      <DayDetailsModal
+        details={detailData}
+        open={openDetails}
+        setOpen={setOpenDetails}
+      />
     </DashboardLayout>
   );
 }
