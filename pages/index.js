@@ -66,7 +66,7 @@ export default function Home() {
           <div className="flex flex-col items-center">
             <h1 className="text-5xl font-semibold mb-3">Huawei Health</h1>
             <p className="text-lg text-gray-700">
-              See your milestones, statistics, paths you ran, and much more.
+              See your milestones, statistics, paths you ran, and much more
             </p>
           </div>
           <div>

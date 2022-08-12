@@ -67,7 +67,7 @@ export default function Dashboard() {
     <DashboardLayout navigation={navigation}>
       <div>
         <div className="max-w-7xl">
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">Dashboard</h1>
         </div>
         <div className="max-w-7xl">
           <div className="py-4 space-y-4">
@@ -105,7 +105,12 @@ export default function Dashboard() {
             )}
             {motionPathData.length === 0 && (
               <div className="space-y-4">
-                <p>You have not uploaded file for motion paths</p>
+                <p>
+                  You have not uploaded file for motion paths,{" "}
+                  <span className="font-semibold">
+                    you cannot access the Motion Paths page
+                  </span>
+                </p>
                 <div className="w-64 flex justify-start">
                   <UploadDropZone />
                 </div>
@@ -113,12 +118,47 @@ export default function Dashboard() {
             )}
             {sportPerMinute.length === 0 && (
               <div className="space-y-4">
-                <p>You have not uploaded file for sport per minute</p>
+                <p>
+                  You have not uploaded file for sport per minute,{" "}
+                  <span className="font-semibold">
+                    you cannot access the Statistics page
+                  </span>
+                </p>
                 <div className="w-64 flex justify-start">
                   <UploadDropZone />
                 </div>
               </div>
             )}
+            <h2 className="font-semibold text-2xl text-gray-900">
+              How to get these 2 files?
+            </h2>
+            <ul className="ml-4 list-disc text-gray-900">
+              <li>On your phone, open the Huawei Health app</li>
+              <li>
+                Tap the 'Me' button in the lower right-hand corner of the main
+                screen
+              </li>
+              <li> Now tap on your account name on top of the screen</li>
+              <li>
+                Tap on 'Privacy Center'{" "}
+                <span className="italic">
+                  (if there is no Privacy Center, then again click on 'Me'
+                  button and then again tap on your account name)
+                </span>
+              </li>
+              <li>Tap 'Request Your Data'</li>
+              <li>Select 'Health' from the list and confirm your selection</li>
+              <li>Follow any further in-app instructions</li>
+              <li>
+                Wait for the mail from Huawei to arrive with a link to download
+                the data (ZIP file)
+              </li>
+            </ul>
+            <p>
+              Download data and upload{" "}
+              <span className="font-semibold">motion path</span> and{" "}
+              <span className="font-semibold">sport per minute</span> files
+            </p>
           </div>
         </div>
       </div>

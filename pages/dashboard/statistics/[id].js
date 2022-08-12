@@ -15,6 +15,7 @@ import {
 import { Bar, getElementsAtEvent } from "react-chartjs-2";
 import sportPerMinuteState from "../../../atoms/sportPerMinute";
 import DayDetailsModal from "../../../components/DayDetailsModal";
+import numberWithSpaces from "../../../lib/numberWithSpaces";
 
 export default function MotionPath() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function MotionPath() {
   const [detailsData, setDetailsData] = useState([[]]);
   const [detailData, setDetailData] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
+  const [stats, setStats] = useState([]);
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
@@ -61,6 +63,8 @@ export default function MotionPath() {
       router.push("/dashboard");
       return;
     }
+
+    console.log(sportPerMinute);
 
     setDay({
       ...sportPerMinute[router.query.id],
@@ -131,12 +135,43 @@ export default function MotionPath() {
         }
       });
 
-    console.log(detailDataArr);
+    const statsArr = [];
+
+    statsArr.push({
+      name: "Total Steps",
+      stat: numberWithSpaces(sportPerMinute[router.query.id].totalSteps),
+      icon: "",
+    });
+
+    statsArr.push({
+      name: "Total Distance",
+      stat:
+        numberWithSpaces(sportPerMinute[router.query.id].totalDistance / 1000) +
+        " km",
+      icon: "",
+    });
+
+    statsArr.push({
+      name: "Total Calories",
+      stat:
+        numberWithSpaces(sportPerMinute[router.query.id].totalCalories / 1000) +
+        " kcal",
+      icon: "",
+    });
+
+    if (sportPerMinute[router.query.id].totalFloors > 0) {
+      statsArr.push({
+        name: "Total Floors",
+        stat: numberWithSpaces(sportPerMinute[router.query.id].totalFloors),
+        icon: "",
+      });
+    }
 
     setChartData({ steps, distance, calories });
     setDeviceCodes(deviceCodesArr);
     setVersions(versionsArr);
     setDetailsData(detailDataArr);
+    setStats(statsArr);
   }, []);
 
   const labels = [
@@ -207,8 +242,6 @@ export default function MotionPath() {
       index = elements[0].index;
     }
 
-    console.log(detailsData[index]);
-
     setDetailData(detailsData[index]);
     setOpenDetails(true);
   }
@@ -237,6 +270,22 @@ export default function MotionPath() {
           {day?.recordDay.toString().slice(0, 4)}
           <span className="text-gray-600">Timezone: {day?.timeZone}</span>
         </p>
+        {/* stats */}
+        <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {stats.map((item) => (
+            <div
+              key={item.name}
+              className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6"
+            >
+              <dt className="text-sm font-medium text-gray-500 truncate">
+                {item.name}
+              </dt>
+              <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                {item.stat}
+              </dd>
+            </div>
+          ))}
+        </dl>
         {/* graph */}
         <h2 className="font-semibold text-2xl">Steps</h2>
         <Bar

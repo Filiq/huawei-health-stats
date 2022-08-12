@@ -34,6 +34,9 @@ export default function Statistics() {
         totalCalories: item.sportDataUserData.reduce((prev, current) => {
           return prev + current.sportBasicInfos[0].calorie;
         }, 0),
+        totalFloors: item.sportDataUserData.reduce((prev, current) => {
+          return prev + current.sportBasicInfos[0].floor;
+        }, 0),
       };
     });
 
@@ -123,10 +126,17 @@ export default function Statistics() {
 
   return (
     <DashboardLayout navigation={navigation}>
+      <div className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="mb-4 text-3xl font-semibold text-gray-900">
+            Statistics
+          </h1>
+        </div>
+      </div>
       <p className="px-4 py-3 bg-white shadow rounded-lg overflow-hidden">
         You are using Huawei Health app to track your daily steps, distance and
         calories for more than {numberWithSpaces(sportPerMinuteData.length)}{" "}
-        days.
+        days
       </p>
       {/* stats */}
       <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">

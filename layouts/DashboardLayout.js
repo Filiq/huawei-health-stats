@@ -62,7 +62,7 @@ export default function DashboardLayout({ navigation, children }) {
               <div className="flex-shrink-0 flex items-center px-4">
                 <Link href="/">
                   <h1 className="text-white font-semibold text-xl cursor-pointer">
-                    Huawei Health
+                    Huawei Health Web
                   </h1>
                 </Link>
               </div>
@@ -108,7 +108,7 @@ export default function DashboardLayout({ navigation, children }) {
           <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
             <Link href="/">
               <h1 className="text-white font-semibold text-xl cursor-pointer">
-                Huawei Health
+                Huawei Health Web
               </h1>
             </Link>
           </div>
