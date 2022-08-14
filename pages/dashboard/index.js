@@ -7,8 +7,11 @@ import sportPerMinuteState from "../../atoms/sportPerMinute";
 import uploadedFileState from "../../atoms/uploadedFile";
 import UploadDropZone from "../../components/UploadDropZone";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { useRouter } from "next/router";
 
 export default function Dashboard() {
+  const router = useRouter();
+
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
     {
@@ -129,39 +132,49 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-            <h2 className="font-semibold text-2xl text-gray-900">
-              How to get these 2 files?
-            </h2>
-            <ul className="ml-4 list-disc text-gray-900">
-              <li>On your phone, open the Huawei Health app</li>
-              <li>
-                Tap the &apos;Me&apos; button in the lower right-hand corner of
-                the main screen
-              </li>
-              <li> Now tap on your account name on top of the screen</li>
-              <li>
-                Tap on &apos;Privacy Center&apos;{" "}
-                <span className="italic">
-                  (if there is no Privacy Center, then again click on
-                  &apos;Me&apos; button and then again tap on your account name)
-                </span>
-              </li>
-              <li>Tap &apos;Request Your Data&apos;</li>
-              <li>
-                Select &apos;Health&apos; from the list and confirm your
-                selection
-              </li>
-              <li>Follow any further in-app instructions</li>
-              <li>
-                Wait for the mail from Huawei to arrive with a link to download
-                the data (ZIP file)
-              </li>
-            </ul>
-            <p>
-              Download data and upload{" "}
-              <span className="font-semibold">motion path</span> and{" "}
-              <span className="font-semibold">sport per minute</span> files
-            </p>
+            <div
+              className={`space-y-4 ${
+                router.asPath.split("#")[1] === "how-to-get-these-2-files"
+                  ? "border-2 border-red-500 p-5"
+                  : ""
+              }`}
+            >
+              <h2 className="font-semibold text-2xl text-gray-900">
+                How to get these 2 files?
+              </h2>
+              <ul className="ml-4 list-disc text-gray-900">
+                <li>On your phone, open the Huawei Health app</li>
+                <li>
+                  Tap the &apos;Me&apos; button in the lower right-hand corner
+                  of the main screen
+                </li>
+                <li> Now tap on your account name on top of the screen</li>
+                <li>
+                  Tap on &apos;Privacy Center&apos;{" "}
+                  <span className="italic">
+                    (if there is no &apos;Privacy Center&apos;, you are probably
+                    in &apos;Member Center &apos;, so again click on
+                    &apos;Me&apos; button and then again tap on your account
+                    name)
+                  </span>
+                </li>
+                <li>Tap &apos;Request Your Data&apos;</li>
+                <li>
+                  Select &apos;Health&apos; from the list and confirm your
+                  selection
+                </li>
+                <li>Follow any further in-app instructions</li>
+                <li>
+                  Wait for the mail from Huawei to arrive with a link to
+                  download the data (ZIP file)
+                </li>
+              </ul>
+              <p>
+                Download data and upload{" "}
+                <span className="font-semibold">motion path</span> and{" "}
+                <span className="font-semibold">sport per minute</span> files
+              </p>
+            </div>
           </div>
         </div>
       </div>

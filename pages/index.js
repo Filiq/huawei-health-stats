@@ -8,6 +8,7 @@ import motionPathDataState from "../atoms/motionPathData";
 import sportPerMinuteState from "../atoms/sportPerMinute";
 import { useRouter } from "next/router";
 import fileNamesState from "../atoms/fileNames";
+import Link from "next/link";
 
 export default function Home() {
   const file = useRecoilValue(uploadedFileState);
@@ -71,6 +72,11 @@ export default function Home() {
           </div>
           <div>
             <UploadDropZone />
+          </div>
+          <div>
+            <Link href="/dashboard#how-to-get-these-2-files">
+              <a className="text-blue-600">What files should I upload?</a>
+            </Link>
           </div>
         </div>
       </MainLayout>

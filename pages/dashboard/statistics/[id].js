@@ -206,7 +206,7 @@ export default function MotionPath() {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        display: false,
       },
     },
   };
