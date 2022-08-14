@@ -149,13 +149,7 @@ export default function DayDetailsModal({ details, open, setOpen }) {
                         <dt className="text-sm font-medium text-gray-500">
                           Version
                         </dt>
-                        <dd
-                          className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"
-                          onClick={() => {
-                            console.log("pico");
-                            document.getElementById("vole").scrollTo(0, 0);
-                          }}
-                        >
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                           {detail?.version}
                         </dd>
                       </div>

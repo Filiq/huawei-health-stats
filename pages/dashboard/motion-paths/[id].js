@@ -1,4 +1,9 @@
-import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
+import {
+  ChartBarIcon,
+  HomeIcon,
+  UsersIcon,
+  GiftIcon,
+} from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "../../../layouts/DashboardLayout";
@@ -30,10 +35,19 @@ export default function MotionPath() {
       icon: ChartBarIcon,
       current: false,
     },
+    {
+      name: "Support",
+      href: "/dashboard/support",
+      icon: GiftIcon,
+      current: false,
+    },
   ];
 
   useEffect(() => {
-    // console.log(router.query.id);
+    if (motionPathData.length === 0) {
+      router.push("/dashboard");
+      return;
+    }
 
     let mapPoints =
       motionPathData[router.query.id].attribute.split("\ntp=lbs;");
@@ -73,7 +87,6 @@ export default function MotionPath() {
 
     mapPoints = mapPoints.filter((item) => item.lon !== "-80.0");
 
-    console.log(mapPoints);
     setPathCoords(mapPoints);
     setPath(motionPathData[router.query.id]);
 

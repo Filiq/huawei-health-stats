@@ -1,4 +1,9 @@
-import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
+import {
+  ChartBarIcon,
+  HomeIcon,
+  UsersIcon,
+  GiftIcon,
+} from "@heroicons/react/outline";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "../../../layouts/DashboardLayout";
@@ -47,6 +52,12 @@ export default function MotionPath() {
       icon: ChartBarIcon,
       current: true,
     },
+    {
+      name: "Support",
+      href: "/dashboard/support",
+      icon: GiftIcon,
+      current: false,
+    },
   ];
 
   ChartJS.register(
@@ -63,8 +74,6 @@ export default function MotionPath() {
       router.push("/dashboard");
       return;
     }
-
-    console.log(sportPerMinute);
 
     setDay({
       ...sportPerMinute[router.query.id],

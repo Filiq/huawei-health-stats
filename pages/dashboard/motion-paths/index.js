@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
+import {
+  ChartBarIcon,
+  HomeIcon,
+  UsersIcon,
+  GiftIcon,
+} from "@heroicons/react/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
 import { useRecoilState } from "recoil";
 import motionPathDataState from "../../../atoms/motionPathData";
@@ -34,6 +39,12 @@ export default function MotionPaths() {
       name: "Statistics",
       href: "/dashboard/statistics",
       icon: ChartBarIcon,
+      current: false,
+    },
+    {
+      name: "Support",
+      href: "/dashboard/support",
+      icon: GiftIcon,
       current: false,
     },
   ];

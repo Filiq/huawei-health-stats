@@ -94,9 +94,6 @@ export default function MotionPathMap({ pathCoords }) {
       ])
       .addTo(map);
 
-    //console.log(pathCoords[0]);
-    //console.log(pathCoords.map((coord) => [coord.lon, coord.lat]));
-
     document.querySelector(".mapbox-gl-draw_line").remove();
     document.querySelector(".mapbox-gl-draw_polygon").remove();
     document.querySelector(".mapbox-gl-draw_point").remove();

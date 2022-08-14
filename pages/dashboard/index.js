@@ -1,4 +1,9 @@
-import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
+import {
+  ChartBarIcon,
+  HomeIcon,
+  UsersIcon,
+  GiftIcon,
+} from "@heroicons/react/outline";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import fileNamesState from "../../atoms/fileNames";
@@ -26,6 +31,12 @@ export default function Dashboard() {
       icon: ChartBarIcon,
       current: false,
     },
+    {
+      name: "Support",
+      href: "/dashboard/support",
+      icon: GiftIcon,
+      current: false,
+    },
   ];
 
   const file = useRecoilValue(uploadedFileState);
@@ -51,17 +62,19 @@ export default function Dashboard() {
             motionPath: fileNames.motionPath,
             sportPerMinute: file.name,
           });
-        } else {
+        } else if (data[0]?.totalSteps) {
           setMotionPathData(data);
           setFileNames({
             sportPerMinute: fileNames.sportPerMinute,
             motionPath: file.name,
           });
+        } else {
+          console.error("Invalid file");
         }
       };
 
       reader.onerror = function () {
-        console.log(reader.error);
+        console.error(reader.error);
       };
     }
   }, [file]);

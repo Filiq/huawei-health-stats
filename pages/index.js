@@ -29,27 +29,27 @@ export default function Home() {
       reader.onload = function () {
         const data = JSON.parse(reader.result);
 
-        console.log(data);
-
         if (data[0]?.sportDataUserData) {
           setSportPerMinute(data);
           setFileNames({
             motionPath: fileNames.motionPath,
             sportPerMinute: file.name,
           });
-        } else {
+        } else if (data[0]?.totalSteps) {
           setMotionPathData(data);
           setFileNames({
             sportPerMinute: fileNames.sportPerMinute,
             motionPath: file.name,
           });
+        } else {
+          console.error("Invalid file");
         }
 
         router.push("/dashboard");
       };
 
       reader.onerror = function () {
-        console.log(reader.error);
+        console.error(reader.error);
       };
     }
   }, [file]);

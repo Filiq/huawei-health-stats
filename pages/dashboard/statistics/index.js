@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChartBarIcon, HomeIcon, UsersIcon } from "@heroicons/react/outline";
-
+import {
+  ChartBarIcon,
+  HomeIcon,
+  UsersIcon,
+  GiftIcon,
+} from "@heroicons/react/outline";
 import { useRecoilState } from "recoil";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import sportPerMinuteState from "../../../atoms/sportPerMinute";
@@ -99,8 +103,6 @@ export default function Statistics() {
     });
 
     setStats(statsArr);
-
-    console.log(sportPerMinuteData);
   }, []);
 
   const navigation = [
@@ -116,6 +118,12 @@ export default function Statistics() {
       href: "/dashboard/statistics",
       icon: ChartBarIcon,
       current: true,
+    },
+    {
+      name: "Support",
+      href: "/dashboard/support",
+      icon: GiftIcon,
+      current: false,
     },
   ];
 
